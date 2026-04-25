@@ -80,7 +80,7 @@
                         { nome: "Mário Ricardo", partido: "REP", alinhamento: "Oposição", foto: "mario-ricardo" },
                         { nome: "Edson Vieira", partido: "UB", alinhamento: "Base", foto: "edson-vieira" },
                         { nome: "João Paulo", partido: "PT", alinhamento: "Base", foto: "joao-paulo" },
-                        { nome: "Wanderson Florêncio", partido: "SOLID", alinhamento: "Oposição", foto: "wanderson-florencio" },
+                        { nome: "Wanderson Florêncio", partido: "SOLID", alinhamento: "Base", foto: "wanderson-florencio" },
                         { nome: "Waldemar Borges", partido: "MDB", alinhamento: "Oposição", foto: "waldemar-borges" },
                         { nome: "Alberto Feitosa", partido: "PL", alinhamento: "Oposição", foto: "coronel-alberto-feitosa" },
                         { nome: "Diogo Moraes", partido: "PSDB", alinhamento: "Oposição", foto: "diogo-moraes" },
@@ -103,8 +103,8 @@
                     ],
                     Antes: [
                         { nome: "Antonio Coelho", partido: "UB", alinhamento: "Oposição", foto: "antonio-coelho" },
-                        { nome: "Henrique Queiroz", partido: "PP", alinhamento: "Oposição", foto: "henrique-queiroz" },
-                        { nome: "Gustavo Gouveia", partido: "SOLID", alinhamento: "Oposição", foto: "gustavo-gouveia" },
+                        { nome: "Henrique Queiroz", partido: "PP", alinhamento: "Base", foto: "henrique-queiroz" },
+                        { nome: "Gustavo Gouveia", partido: "SOLID", alinhamento: "Base", foto: "gustavo-gouveia" },
                         { nome: "Dani Portela", partido: "PSOL", alinhamento: "Oposição", foto: "dani-portela" },
                         { nome: "Mário Ricardo", partido: "REP", alinhamento: "Oposição", foto: "mario-ricardo" },
                         { nome: "João de Nadegi", partido: "PV", alinhamento: "Base", foto: "joao-de-nadegi" },
@@ -129,7 +129,7 @@
                         { nome: "Izaías Régis", partido: "PSDB", alinhamento: "Base", foto: "izaias-regis" },
                         { nome: "Antonio Coelho", partido: "UB", alinhamento: "Oposição", foto: "antonio-coelho" },
                         { nome: "Junior Matuto", partido: "PRD", alinhamento: "Oposição", foto: "junior-matuto" },
-                        { nome: "Jeferson Timóteo", partido: "PP", alinhamento: "Oposição", foto: "jeferson-timoteo" },
+                        { nome: "Jeferson Timóteo", partido: "PP", alinhamento: "Base", foto: "jeferson-timoteo" },
                         { nome: "Joaquim Lira", partido: "PV", alinhamento: "Base", foto: "joaquim-lira" },
                         { nome: "Nino de Enoque", partido: "PL", alinhamento: "Base", foto: "nino-de-enoque" },
                         { nome: "Waldemar Borges", partido: "MDB", alinhamento: "Oposição", foto: "waldemar-borges" }
@@ -142,7 +142,6 @@
                     if (window.lucide) window.lucide.createIcons();
                 };
                 updateIcons();
-                // Pequeno delay para garantir que a animação não quebre os ícones
                 const timer = setTimeout(updateIcons, 100);
                 return () => clearTimeout(timer);
             }, [comissao, periodo]);
@@ -249,7 +248,7 @@
                                         React.createElement('div', { className: `w-32 h-32 rounded-full border-[6px] overflow-hidden shadow-xl transition-transform group-hover:scale-105 ${deputado.alinhamento === 'Base' ? 'border-[#024796]' : 'border-[#f83d03]'}` },
                                             React.createElement('img', { 
                                                 src: imagens[deputado.foto] || "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/perfil-generico.png", 
-                                                alt: deputado.nome,
+                                                alt: `${deputado.nome}`,
                                                 className: 'w-full h-full object-cover',
                                                 onError: (e) => { e.target.src = "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/perfil-generico.png"; }
                                             })
