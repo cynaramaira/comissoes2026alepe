@@ -1,276 +1,280 @@
-import React, { useState } from 'react';
-import { ArrowRightLeft, ShieldCheck, AlertCircle } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico Alepe - Mapa das Comissões</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
 
-const App = () => {
-  const [comissao, setComissao] = useState('Justiça');
-  const [periodo, setPeriodo] = useState('Depois'); // 'Antes' (2025) ou 'Depois' (2026)
-  const [animating, setAnimating] = useState(false);
+    <script type="text/javascript">
+        const { useState, useEffect } = React;
 
-  const imagens = {
-    "abimael-santos": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/ABIMAEL-SANTOS-scaled-e1675862727585.jpg",
-    "adalto-santos": "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/ADALTO-SANTOS-V2-scaled-e1736175493765.jpg",
-    "antonio-coelho": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/ANTONIO-COELHO-scaled-e1675863217804.jpg",
-    "antonio-moraes": "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/Antonio-Moraes.png",
-    "claudiano-martins-filho": "https://www.alepe.pe.gov.br/wp-content/uploads/2022/04/CLAUDIANO-MARTINS-FILHO-scaled-e1675863305761.jpg",
-    "coronel-alberto-feitosa": "https://www.alepe.pe.gov.br/wp-content/uploads/2018/04/AlbertoFeitosa_001-scaled-e1675863386211.jpg",
-    "dani-portela": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/DANI-PORTELA-scaled-e1675863495267.jpg",
-    "dannilo-godoy": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/DANNILO-GODOY-1-scaled-e1675863555736.jpg",
-    "debora-almeida": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/Debora-Almeida.png",
-    "diogo-moraes": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/Diogo-Moraes.png",
-    "edson-vieira": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/09/Edson-Vieira-flip-2.png",
-    "eriberto-filho": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/ERIBERTO-FILHO-scaled-e1676402906319.jpg",
-    "france-hacker": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/FRANCE-HACKER-scaled-e1675859649895.jpg",
-    "izaias-regis": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/IZAIAS-REGIS-scaled-e1675859777797.jpg",
-    "jarbas-filho": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/Jarbas-Filho.png",
-    "joao-de-nadegi": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/Joao-de-Nadegi-1.png",
-    "joao-paulo": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/Joao-Paulo.png",
-    "joaquim-lira": "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/JOAQUIM-LIRA-4-scaled-e1675860569922.jpg",
-    "luciano-duque": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/Luciano-Duque.png",
-    "mario-ricardo": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/MARIO-RICARDO-1-scaled-e1676403125673.jpg",
-    "nino-de-enoque": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/NINO-DE-ENOQUE-scaled-e1675861405733.jpg",
-    "sileno-guedes": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/Sileno-Guedes.png",
-    "waldemar-borges": "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/WaldemarBorges_001-scaled-e1675862571749.jpg",
-    "wanderson-florencio": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/wandersonFlorencio.jpg",
-    "william-brigido": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/WILLIAM-BRIGIDO-scaled-e1675862649941.jpg",
-    "junior-matuto": "https://www.alepe.pe.gov.br/wp-content/uploads/2024/09/JUNIOR-MATUTO-V2-scaled-e1730987572192.jpg",
-    "gustavo-gouveia": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/GUSTAVO-GOUVEIA-scaled-e1675859397629.jpg",
-    "henrique-queiroz": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/HenriqueQueirozFilho-scaled-e1675863870515.jpg",
-    "jeferson-timoteo": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/JEFERSON-TIMOTEO-1-scaled-e1675860179567.jpg"
-  };
+        const App = () => {
+            const [comissao, setComissao] = useState('Justiça');
+            const [periodo, setPeriodo] = useState('Depois'); // 'Antes' (2025) ou 'Depois' (2026)
+            const [animating, setAnimating] = useState(false);
 
-  const data = {
-    Justiça: {
-      titulo: "Comissão de Justiça",
-      descricao: "A comissão avalia a constitucionalidade dos projetos e serve como o principal filtro do legislativo.",
-      Depois: [
-        { nome: "Antônio Moraes", partido: "PSD", alinhamento: "Base", foto: "antonio-moraes" },
-        { nome: "Jarbas Filho", partido: "PSD", alinhamento: "Base", foto: "jarbas-filho" },
-        { nome: "Edson Vieira", partido: "POD", alinhamento: "Base", foto: "edson-vieira" },
-        { nome: "João Paulo", partido: "PT", alinhamento: "Base", foto: "joao-paulo" },
-        { nome: "Claudiano Martins Filho", partido: "PP", alinhamento: "Base", foto: "claudiano-martins-filho" },
-        { nome: "Adalto Santos", partido: "PP", alinhamento: "Base", foto: "adalto-santos" },
-        { nome: "Alberto Feitosa", partido: "PL", alinhamento: "Oposição", foto: "coronel-alberto-feitosa" },
-        { nome: "Diogo Moraes", partido: "PSB", alinhamento: "Oposição", foto: "diogo-moraes" },
-        { nome: "Sileno Guedes", partido: "PSB", alinhamento: "Oposição", foto: "sileno-guedes" }
-      ],
-      Antes: [
-        { nome: "Antônio Moraes", partido: "PP", alinhamento: "Base", foto: "antonio-moraes" },
-        { nome: "Mário Ricardo", partido: "REP", alinhamento: "Oposição", foto: "mario-ricardo" },
-        { nome: "Edson Vieira", partido: "UB", alinhamento: "Base", foto: "edson-vieira" },
-        { nome: "João Paulo", partido: "PT", alinhamento: "Base", foto: "joao-paulo" },
-        { nome: "Wanderson Florêncio", partido: "SOLID", alinhamento: "Oposição", foto: "wanderson-florencio" },
-        { nome: "Waldemar Borges", partido: "MDB", alinhamento: "Oposição", foto: "waldemar-borges" },
-        { nome: "Alberto Feitosa", partido: "PL", alinhamento: "Oposição", foto: "coronel-alberto-feitosa" },
-        { nome: "Diogo Moraes", partido: "PSDB", alinhamento: "Oposição", foto: "diogo-moraes" },
-        { nome: "Sileno Guedes", partido: "PSB", alinhamento: "Oposição", foto: "sileno-guedes" }
-      ]
-    },
-    Finanças: {
-      titulo: "Comissão de Finanças",
-      descricao: "O colegiado analisa o impacto financeiro das propostas e define a tramitação da Lei Orçamentária.",
-      Depois: [
-        { nome: "Antonio Coelho", partido: "UB", alinhamento: "Base", foto: "antonio-coelho" },
-        { nome: "Dannilo Godoy", partido: "PP", alinhamento: "Base", foto: "dannilo-godoy" },
-        { nome: "Débora Almeida", partido: "PSD", alinhamento: "Base", foto: "debora-almeida" },
-        { nome: "William Brigido", partido: "PSD", alinhamento: "Base", foto: "william-brigido" },
-        { nome: "Luciano Duque", partido: "POD", alinhamento: "Base", foto: "luciano-duque" },
-        { nome: "João de Nadegi", partido: "PV", alinhamento: "Base", foto: "joao-de-nadegi" },
-        { nome: "Alberto Feitosa", partido: "PL", alinhamento: "Oposição", foto: "coronel-alberto-feitosa" },
-        { nome: "Diogo Moraes", partido: "PSB", alinhamento: "Oposição", foto: "diogo-moraes" },
-        { nome: "Eriberto Filho", partido: "PSB", alinhamento: "Oposição", foto: "eriberto-filho" }
-      ],
-      Antes: [
-        { nome: "Antonio Coelho", partido: "UB", alinhamento: "Oposição", foto: "antonio-coelho" },
-        { nome: "Henrique Queiroz", partido: "PP", alinhamento: "Oposição", foto: "henrique-queiroz" },
-        { nome: "Gustavo Gouveia", partido: "SOLID", alinhamento: "Oposição", foto: "gustavo-gouveia" },
-        { nome: "Dani Portela", partido: "PSOL", alinhamento: "Oposição", foto: "dani-portela" },
-        { nome: "Mário Ricardo", partido: "REP", alinhamento: "Oposição", foto: "mario-ricardo" },
-        { nome: "João de Nadegi", partido: "PV", alinhamento: "Base", foto: "joao-de-nadegi" },
-        { nome: "Alberto Feitosa", partido: "PL", alinhamento: "Oposição", foto: "coronel-alberto-feitosa" },
-        { nome: "Diogo Moraes", partido: "PSDB", alinhamento: "Oposição", foto: "diogo-moraes" },
-        { nome: "Junior Matuto", partido: "PRD", alinhamento: "Oposição", foto: "junior-matuto" }
-      ]
-    },
-    Administração: {
-      titulo: "Comissão de Administração",
-      descricao: "A comissão avalia projetos sobre a gestão do Estado e a organização dos serviços públicos.",
-      Depois: [
-        { nome: "Izaías Régis", partido: "PSD", alinhamento: "Base", foto: "izaias-regis" },
-        { nome: "Antonio Coelho", partido: "UB", alinhamento: "Base", foto: "antonio-coelho" },
-        { nome: "France Hacker", partido: "UB", alinhamento: "Base", foto: "france-hacker" },
-        { nome: "Wanderson Florêncio", partido: "POD", alinhamento: "Base", foto: "wanderson-florencio" },
-        { nome: "Joaquim Lira", partido: "PV", alinhamento: "Base", foto: "joaquim-lira" },
-        { nome: "Nino de Enoque", partido: "PL", alinhamento: "Base", foto: "nino-de-enoque" },
-        { nome: "Waldemar Borges", partido: "PSB", alinhamento: "Oposição", foto: "waldemar-borges" }
-      ],
-      Antes: [
-        { nome: "Izaías Régis", partido: "PSDB", alinhamento: "Base", foto: "izaias-regis" },
-        { nome: "Antonio Coelho", partido: "UB", alinhamento: "Oposição", foto: "antonio-coelho" },
-        { nome: "Junior Matuto", partido: "PRD", alinhamento: "Oposição", foto: "junior-matuto" },
-        { nome: "Jeferson Timóteo", partido: "PP", alinhamento: "Oposição", foto: "jeferson-timoteo" },
-        { nome: "Joaquim Lira", partido: "PV", alinhamento: "Base", foto: "joaquim-lira" },
-        { nome: "Nino de Enoque", partido: "PL", alinhamento: "Base", foto: "nino-de-enoque" },
-        { nome: "Waldemar Borges", partido: "MDB", alinhamento: "Oposição", foto: "waldemar-borges" }
-      ]
-    }
-  };
+            const imagens = {
+                "abimael-santos": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/ABIMAEL-SANTOS-scaled-e1675862727585.jpg",
+                "adalto-santos": "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/ADALTO-SANTOS-V2-scaled-e1736175493765.jpg",
+                "antonio-coelho": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/ANTONIO-COELHO-scaled-e1675863217804.jpg",
+                "antonio-moraes": "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/Antonio-Moraes.png",
+                "claudiano-martins-filho": "https://www.alepe.pe.gov.br/wp-content/uploads/2022/04/CLAUDIANO-MARTINS-FILHO-scaled-e1675863305761.jpg",
+                "coronel-alberto-feitosa": "https://www.alepe.pe.gov.br/wp-content/uploads/2018/04/AlbertoFeitosa_001-scaled-e1675863386211.jpg",
+                "dani-portela": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/DANI-PORTELA-scaled-e1675863495267.jpg",
+                "dannilo-godoy": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/DANNILO-GODOY-1-scaled-e1675863555736.jpg",
+                "debora-almeida": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/Debora-Almeida.png",
+                "diogo-moraes": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/Diogo-Moraes.png",
+                "edson-vieira": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/09/Edson-Vieira-flip-2.png",
+                "eriberto-filho": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/ERIBERTO-FILHO-scaled-e1676402906319.jpg",
+                "france-hacker": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/FRANCE-HACKER-scaled-e1675859649895.jpg",
+                "izaias-regis": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/IZAIAS-REGIS-scaled-e1675859777797.jpg",
+                "jarbas-filho": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/Jarbas-Filho.png",
+                "joao-de-nadegi": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/Joao-de-Nadegi-1.png",
+                "joao-paulo": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/Joao-Paulo.png",
+                "joaquim-lira": "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/JOAQUIM-LIRA-4-scaled-e1675860569922.jpg",
+                "luciano-duque": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/Luciano-Duque.png",
+                "mario-ricardo": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/MARIO-RICARDO-1-scaled-e1676403125673.jpg",
+                "nino-de-enoque": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/NINO-DE-ENOQUE-scaled-e1675861405733.jpg",
+                "sileno-guedes": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/Sileno-Guedes.png",
+                "waldemar-borges": "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/WaldemarBorges_001-scaled-e1675862571749.jpg",
+                "wanderson-florencio": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/wandersonFlorencio.jpg",
+                "william-brigido": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/WILLIAM-BRIGIDO-scaled-e1675862649941.jpg",
+                "junior-matuto": "https://www.alepe.pe.gov.br/wp-content/uploads/2024/09/JUNIOR-MATUTO-V2-scaled-e1730987572192.jpg",
+                "gustavo-gouveia": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/GUSTAVO-GOUVEIA-scaled-e1675859397629.jpg",
+                "henrique-queiroz": "https://www.alepe.pe.gov.br/wp-content/uploads/2019/02/HenriqueQueirozFilho-scaled-e1675863870515.jpg",
+                "jeferson-timoteo": "https://www.alepe.pe.gov.br/wp-content/uploads/2023/02/JEFERSON-TIMOTEO-1-scaled-e1675860179567.jpg"
+            };
 
-  const handlePeriodoChange = (novoPeriodo) => {
-    if (periodo === novoPeriodo) return;
-    setAnimating(true);
-    setTimeout(() => {
-      setPeriodo(novoPeriodo);
-      setAnimating(false);
-    }, 300);
-  };
+            const data = {
+                Justiça: {
+                    titulo: "Comissão de Justiça",
+                    descricao: "A comissão avalia a constitucionalidade dos projetos e serve como o principal filtro do legislativo.",
+                    Depois: [
+                        { nome: "Antônio Moraes", partido: "PSD", alinhamento: "Base", foto: "antonio-moraes" },
+                        { nome: "Jarbas Filho", partido: "PSD", alinhamento: "Base", foto: "jarbas-filho" },
+                        { nome: "Edson Vieira", partido: "POD", alinhamento: "Base", foto: "edson-vieira" },
+                        { nome: "João Paulo", partido: "PT", alinhamento: "Base", foto: "joao-paulo" },
+                        { nome: "Claudiano Martins Filho", partido: "PP", alinhamento: "Base", foto: "claudiano-martins-filho" },
+                        { nome: "Adalto Santos", partido: "PP", alinhamento: "Base", foto: "adalto-santos" },
+                        { nome: "Alberto Feitosa", partido: "PL", alinhamento: "Oposição", foto: "coronel-alberto-feitosa" },
+                        { nome: "Diogo Moraes", partido: "PSB", alinhamento: "Oposição", foto: "diogo-moraes" },
+                        { nome: "Sileno Guedes", partido: "PSB", alinhamento: "Oposição", foto: "sileno-guedes" }
+                    ],
+                    Antes: [
+                        { nome: "Antônio Moraes", partido: "PP", alinhamento: "Base", foto: "antonio-moraes" },
+                        { nome: "Mário Ricardo", partido: "REP", alinhamento: "Oposição", foto: "mario-ricardo" },
+                        { nome: "Edson Vieira", partido: "UB", alinhamento: "Base", foto: "edson-vieira" },
+                        { nome: "João Paulo", partido: "PT", alinhamento: "Base", foto: "joao-paulo" },
+                        { nome: "Wanderson Florêncio", partido: "SOLID", alinhamento: "Oposição", foto: "wanderson-florencio" },
+                        { nome: "Waldemar Borges", partido: "MDB", alinhamento: "Oposição", foto: "waldemar-borges" },
+                        { nome: "Alberto Feitosa", partido: "PL", alinhamento: "Oposição", foto: "coronel-alberto-feitosa" },
+                        { nome: "Diogo Moraes", partido: "PSDB", alinhamento: "Oposição", foto: "diogo-moraes" },
+                        { nome: "Sileno Guedes", partido: "PSB", alinhamento: "Oposição", foto: "sileno-guedes" }
+                    ]
+                },
+                Finanças: {
+                    titulo: "Comissão de Finanças",
+                    descricao: "O colegiado analisa o impacto financeiro das propostas e define a tramitação da Lei Orçamentária.",
+                    Depois: [
+                        { nome: "Antonio Coelho", partido: "UB", alinhamento: "Base", foto: "antonio-coelho" },
+                        { nome: "Dannilo Godoy", partido: "PP", alinhamento: "Base", foto: "dannilo-godoy" },
+                        { nome: "Débora Almeida", partido: "PSD", alinhamento: "Base", foto: "debora-almeida" },
+                        { nome: "William Brigido", partido: "PSD", alinhamento: "Base", foto: "william-brigido" },
+                        { nome: "Luciano Duque", partido: "POD", alinhamento: "Base", foto: "luciano-duque" },
+                        { nome: "João de Nadegi", partido: "PV", alinhamento: "Base", foto: "joao-de-nadegi" },
+                        { nome: "Alberto Feitosa", partido: "PL", alinhamento: "Oposição", foto: "coronel-alberto-feitosa" },
+                        { nome: "Diogo Moraes", partido: "PSB", alinhamento: "Oposição", foto: "diogo-moraes" },
+                        { nome: "Eriberto Filho", partido: "PSB", alinhamento: "Oposição", foto: "eriberto-filho" }
+                    ],
+                    Antes: [
+                        { nome: "Antonio Coelho", partido: "UB", alinhamento: "Oposição", foto: "antonio-coelho" },
+                        { nome: "Henrique Queiroz", partido: "PP", alinhamento: "Oposição", foto: "henrique-queiroz" },
+                        { nome: "Gustavo Gouveia", partido: "SOLID", alinhamento: "Oposição", foto: "gustavo-gouveia" },
+                        { nome: "Dani Portela", partido: "PSOL", alinhamento: "Oposição", foto: "dani-portela" },
+                        { nome: "Mário Ricardo", partido: "REP", alinhamento: "Oposição", foto: "mario-ricardo" },
+                        { nome: "João de Nadegi", partido: "PV", alinhamento: "Base", foto: "joao-de-nadegi" },
+                        { nome: "Alberto Feitosa", partido: "PL", alinhamento: "Oposição", foto: "coronel-alberto-feitosa" },
+                        { nome: "Diogo Moraes", partido: "PSDB", alinhamento: "Oposição", foto: "diogo-moraes" },
+                        { nome: "Junior Matuto", partido: "PRD", alinhamento: "Oposição", foto: "junior-matuto" }
+                    ]
+                },
+                Administração: {
+                    titulo: "Comissão de Administração",
+                    descricao: "A comissão avalia projetos sobre a gestão do Estado e a organização dos serviços públicos.",
+                    Depois: [
+                        { nome: "Izaías Régis", partido: "PSD", alinhamento: "Base", foto: "izaias-regis" },
+                        { nome: "Antonio Coelho", partido: "UB", alinhamento: "Base", foto: "antonio-coelho" },
+                        { nome: "France Hacker", partido: "UB", alinhamento: "Base", foto: "france-hacker" },
+                        { nome: "Wanderson Florêncio", partido: "POD", alinhamento: "Base", foto: "wanderson-florencio" },
+                        { nome: "Joaquim Lira", partido: "PV", alinhamento: "Base", foto: "joaquim-lira" },
+                        { nome: "Nino de Enoque", partido: "PL", alinhamento: "Base", foto: "nino-de-enoque" },
+                        { nome: "Waldemar Borges", partido: "PSB", alinhamento: "Oposição", foto: "waldemar-borges" }
+                    ],
+                    Antes: [
+                        { nome: "Izaías Régis", partido: "PSDB", alinhamento: "Base", foto: "izaias-regis" },
+                        { nome: "Antonio Coelho", partido: "UB", alinhamento: "Oposição", foto: "antonio-coelho" },
+                        { nome: "Junior Matuto", partido: "PRD", alinhamento: "Oposição", foto: "junior-matuto" },
+                        { nome: "Jeferson Timóteo", partido: "PP", alinhamento: "Oposição", foto: "jeferson-timoteo" },
+                        { nome: "Joaquim Lira", partido: "PV", alinhamento: "Base", foto: "joaquim-lira" },
+                        { nome: "Nino de Enoque", partido: "PL", alinhamento: "Base", foto: "nino-de-enoque" },
+                        { nome: "Waldemar Borges", partido: "MDB", alinhamento: "Oposição", foto: "waldemar-borges" }
+                    ]
+                }
+            };
 
-  const getPlacar = () => {
-    const membros = data[comissao][periodo];
-    const base = membros.filter(m => m.alinhamento === 'Base').length;
-    const oposicao = membros.filter(m => m.alinhamento === 'Oposição').length;
-    return { base, oposicao };
-  };
+            const handlePeriodoChange = (novoPeriodo) => {
+                if (periodo === novoPeriodo) return;
+                setAnimating(true);
+                setTimeout(() => {
+                    setPeriodo(novoPeriodo);
+                    setAnimating(false);
+                }, 300);
+            };
 
-  const placar = getPlacar();
+            const getPlacar = () => {
+                const membros = data[comissao][periodo];
+                const base = membros.filter(m => m.alinhamento === 'Base').length;
+                const oposicao = membros.filter(m => m.alinhamento === 'Oposição').length;
+                return { base, oposicao };
+            };
 
-  return (
-    <div className="flex flex-col bg-slate-100 min-h-screen items-center py-8 px-4 font-sans text-slate-800">
-      <div className="w-full max-w-[500px] aspect-[1080/1350] bg-white shadow-2xl rounded-3xl overflow-hidden flex flex-col relative border border-slate-200">
-        
-        <header className="bg-[#024796] p-6 text-white text-center relative">
-          <div className="absolute top-0 left-0 w-full h-1 bg-[#f83d03]"></div>
-          <img 
-            src="https://jamildo.com/media/uploads/brancologojamildo_6xe6mA0.png" 
-            alt="Logo Jamildo" 
-            className="h-10 mx-auto mb-4"
-          />
-          <h1 className="text-2xl font-bold leading-tight">NOVO MAPA DA ALEPE</h1>
-          <p className="text-sm opacity-90 mt-2">A reorganização das forças para 2026</p>
-        </header>
+            const placar = getPlacar();
 
-        <nav className="flex bg-slate-50 border-b border-slate-200">
-          {Object.keys(data).map((key) => (
-            <button
-              key={key}
-              onClick={() => setComissao(key)}
-              className={`flex-1 py-4 text-xs font-bold transition-all ${
-                comissao === key 
-                ? 'text-[#024796] border-b-4 border-[#024796] bg-white' 
-                : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              {key}
-            </button>
-          ))}
-        </nav>
+            return React.createElement('div', { className: 'flex flex-col min-h-screen items-center py-8 px-4' },
+                React.createElement('div', { className: 'w-full max-w-[500px] bg-white shadow-2xl rounded-3xl overflow-hidden flex flex-col relative border border-slate-200 min-h-[850px]' },
+                    // Header
+                    React.createElement('header', { className: 'bg-[#024796] p-6 text-white text-center relative' },
+                        React.createElement('div', { className: 'absolute top-0 left-0 w-full h-1 bg-[#f83d03]' }),
+                        React.createElement('img', { 
+                            src: "https://jamildo.com/media/uploads/brancologojamildo_6xe6mA0.png", 
+                            alt: "Logo Jamildo", 
+                            className: "h-10 mx-auto mb-4" 
+                        }),
+                        React.createElement('h1', { className: 'text-2xl font-black leading-tight' }, 'NOVO MAPA DA ALEPE'),
+                        React.createElement('p', { className: 'text-sm opacity-90 mt-2' }, 'A reorganização das forças para 2026')
+                    ),
+                    // Navigation
+                    React.createElement('nav', { className: 'flex bg-slate-50 border-b border-slate-200' },
+                        Object.keys(data).map((key) => 
+                            React.createElement('button', {
+                                key: key,
+                                onClick: () => setComissao(key),
+                                className: `flex-1 py-4 text-xs font-bold transition-all ${
+                                    comissao === key 
+                                    ? 'text-[#024796] border-b-4 border-[#024796] bg-white' 
+                                    : 'text-slate-400 hover:text-slate-600'
+                                }`
+                            }, key)
+                        )
+                    ),
+                    // Timeline Toggle
+                    React.createElement('div', { className: 'p-4 flex justify-center gap-2 bg-slate-50' },
+                        React.createElement('button', {
+                            onClick: () => handlePeriodoChange('Antes'),
+                            className: `px-6 py-2 rounded-full text-sm font-bold transition-all shadow-sm ${
+                                periodo === 'Antes' 
+                                ? 'bg-[#f83d03] text-white scale-105' 
+                                : 'bg-white text-slate-500 border border-slate-200'
+                            }`
+                        }, 'Cenário 2025'),
+                        React.createElement('div', { className: 'flex items-center text-slate-300' }, 
+                            React.createElement('i', { 'data-lucide': 'arrow-right-left', className: 'w-5 h-5' })
+                        ),
+                        React.createElement('button', {
+                            onClick: () => handlePeriodoChange('Depois'),
+                            className: `px-6 py-2 rounded-full text-sm font-bold transition-all shadow-sm ${
+                                periodo === 'Depois' 
+                                ? 'bg-[#024796] text-white scale-105' 
+                                : 'bg-white text-slate-500 border border-slate-200'
+                            }`
+                        }, 'Cenário 2026')
+                    ),
+                    // Main Content
+                    React.createElement('main', { className: 'flex-1 p-6 overflow-y-auto bg-white custom-scrollbar' },
+                        React.createElement('div', { className: 'mb-6' },
+                            React.createElement('h2', { className: 'text-xl font-black text-[#024796] mb-1 uppercase' }, data[comissao].titulo),
+                            React.createElement('p', { className: 'text-sm text-slate-500 leading-snug' }, data[comissao].descricao)
+                        ),
+                        // Scoreboard
+                        React.createElement('div', { className: 'flex gap-4 mb-8' },
+                            React.createElement('div', { className: 'flex-1 bg-blue-50 rounded-2xl p-4 border-l-4 border-[#024796]' },
+                                React.createElement('div', { className: 'flex items-center gap-2 mb-1' },
+                                    React.createElement('i', { 'data-lucide': 'shield-check', className: 'w-4 h-4 text-[#024796]' }),
+                                    React.createElement('span', { className: 'text-[10px] font-bold text-[#024796] uppercase' }, 'Base')
+                                ),
+                                React.createElement('div', { className: 'text-3xl font-black text-[#024796]' }, placar.base),
+                                React.createElement('span', { className: 'text-[10px] text-blue-700 font-medium' }, 'Cadeiras Aliadas')
+                            ),
+                            React.createElement('div', { className: 'flex-1 bg-orange-50 rounded-2xl p-4 border-l-4 border-[#f83d03]' },
+                                React.createElement('div', { className: 'flex items-center gap-2 mb-1' },
+                                    React.createElement('i', { 'data-lucide': 'alert-circle', className: 'w-4 h-4 text-[#f83d03]' }),
+                                    React.createElement('span', { className: 'text-[10px] font-bold text-[#f83d03] uppercase' }, 'Oposição')
+                                ),
+                                React.createElement('div', { className: 'text-3xl font-black text-[#f83d03]' }, placar.oposicao),
+                                React.createElement('span', { className: 'text-[10px] text-orange-700 font-medium' }, 'Cadeiras Opositoras')
+                            )
+                        ),
+                        // Grid
+                        React.createElement('div', { className: `grid grid-cols-3 gap-4 transition-all duration-300 ${animating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}` },
+                            data[comissao][periodo].map((deputado) => 
+                                React.createElement('div', { key: `${deputado.nome}-${periodo}`, className: 'flex flex-col items-center' },
+                                    React.createElement('div', { className: 'relative mb-2' },
+                                        React.createElement('div', { className: `w-20 h-20 rounded-full border-4 overflow-hidden shadow-md ${deputado.alinhamento === 'Base' ? 'border-[#024796]' : 'border-[#f83d03]'}` },
+                                            React.createElement('img', { 
+                                                src: imagens[deputado.foto] || "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/perfil-generico.png", 
+                                                alt: deputado.nome,
+                                                className: 'w-full h-full object-cover',
+                                                onError: (e) => { e.target.src = "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/perfil-generico.png"; }
+                                            })
+                                        ),
+                                        React.createElement('div', { className: `absolute -bottom-1 -right-1 px-2 py-0.5 rounded text-[8px] font-black text-white uppercase shadow-sm ${deputado.alinhamento === 'Base' ? 'bg-[#024796]' : 'bg-[#f83d03]'}` }, deputado.partido)
+                                    ),
+                                    React.createElement('p', { className: 'text-[10px] font-bold text-center leading-tight h-8 flex items-center justify-center' }, deputado.nome)
+                                )
+                            )
+                        ),
+                        // Analysis text
+                        React.createElement('div', { className: 'mt-8 p-4 bg-slate-50 rounded-2xl border border-slate-100 text-sm text-slate-600 leading-relaxed italic' },
+                            periodo === 'Depois' 
+                            ? React.createElement('p', null, 'O Palácio do Campo das Princesas consolidou o controle numérico das comissões. O novo mapa partidário garante hegemonia ao governo nos principais colegiados da casa.')
+                            : React.createElement('p', null, 'O governo enfrentava dificuldades regimentais com uma base fragmentada. A oposição detinha maioria em áreas sensíveis e ditava o ritmo das votações orçamentárias.')
+                        )
+                    ),
+                    // Footer
+                    React.createElement('footer', { className: 'bg-slate-50 p-4 border-t border-slate-200 flex justify-between items-center' },
+                        React.createElement('div', { className: 'text-[10px] text-slate-400 font-medium' }, 'Fonte: Diário Oficial / Jamildo.com'),
+                        React.createElement('div', { className: 'flex gap-2' },
+                            React.createElement('div', { className: 'w-2 h-2 rounded-full bg-[#024796]' }),
+                            React.createElement('div', { className: 'w-2 h-2 rounded-full bg-[#f83d03]' })
+                        )
+                    )
+                ),
+                React.createElement('div', { className: 'mt-4 text-slate-400 text-xs text-center' }, 'Desenvolvido para Jamildo.com')
+            );
+        };
 
-        <div className="p-4 flex justify-center gap-2 bg-slate-50">
-          <button 
-            onClick={() => handlePeriodoChange('Antes')}
-            className={`px-6 py-2 rounded-full text-sm font-bold transition-all shadow-sm ${
-              periodo === 'Antes' 
-              ? 'bg-[#f83d03] text-white scale-105' 
-              : 'bg-white text-slate-500 border border-slate-200'
-            }`}
-          >
-            Cenário 2025
-          </button>
-          <div className="flex items-center text-slate-300">
-            <ArrowRightLeft size={20} />
-          </div>
-          <button 
-            onClick={() => handlePeriodoChange('Depois')}
-            className={`px-6 py-2 rounded-full text-sm font-bold transition-all shadow-sm ${
-              periodo === 'Depois' 
-              ? 'bg-[#024796] text-white scale-105' 
-              : 'bg-white text-slate-500 border border-slate-200'
-            }`}
-          >
-            Cenário 2026
-          </button>
-        </div>
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
 
-        <main className="flex-1 p-6 overflow-y-auto bg-white">
-          <div className="mb-6">
-            <h2 className="text-xl font-black text-[#024796] mb-1 uppercase">
-              {data[comissao].titulo}
-            </h2>
-            <p className="text-sm text-slate-500 leading-snug">
-              {data[comissao].descricao}
-            </p>
-          </div>
-
-          <div className="flex gap-4 mb-8">
-            <div className="flex-1 bg-blue-50 rounded-2xl p-4 border-l-4 border-[#024796]">
-              <div className="flex items-center gap-2 mb-1">
-                <ShieldCheck size={18} className="text-[#024796]" />
-                <span className="text-[10px] font-bold text-[#024796] uppercase">Base</span>
-              </div>
-              <div className="text-3xl font-black text-[#024796]">{placar.base}</div>
-              <div className="text-[10px] text-blue-700 font-medium">Cadeiras Aliadas</div>
-            </div>
-            <div className="flex-1 bg-orange-50 rounded-2xl p-4 border-l-4 border-[#f83d03]">
-              <div className="flex items-center gap-2 mb-1">
-                <AlertCircle size={18} className="text-[#f83d03]" />
-                <span className="text-[10px] font-bold text-[#f83d03] uppercase">Oposição</span>
-              </div>
-              <div className="text-3xl font-black text-[#f83d03]">{placar.oposicao}</div>
-              <div className="text-[10px] text-orange-700 font-medium">Cadeiras Opositoras</div>
-            </div>
-          </div>
-
-          <div className={`grid grid-cols-3 gap-4 transition-all duration-300 ${animating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            {data[comissao][periodo].map((deputado) => (
-              <div key={`${deputado.nome}-${periodo}`} className="flex flex-col items-center">
-                <div className="relative mb-2">
-                  <div className={`w-20 h-20 rounded-full border-4 overflow-hidden shadow-md ${
-                    deputado.alinhamento === 'Base' ? 'border-[#024796]' : 'border-[#f83d03]'
-                  }`}>
-                    <img 
-                      src={imagens[deputado.foto] || "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/perfil-generico.png"} 
-                      alt={deputado.nome}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {e.target.src = "https://www.alepe.pe.gov.br/wp-content/uploads/2015/05/perfil-generico.png"}}
-                    />
-                  </div>
-                  <div className={`absolute -bottom-1 -right-1 px-2 py-0.5 rounded text-[8px] font-black text-white uppercase shadow-sm ${
-                    deputado.alinhamento === 'Base' ? 'bg-[#024796]' : 'bg-[#f83d03]'
-                  }`}>
-                    {deputado.partido}
-                  </div>
-                </div>
-                <p className="text-[10px] font-bold text-center leading-tight h-8 flex items-center">
-                  {deputado.nome}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 p-4 bg-slate-50 rounded-2xl border border-slate-100 text-sm text-slate-600 leading-relaxed italic">
-            {periodo === 'Depois' ? (
-              <p>O Palácio do Campo das Princesas consolidou o controle numérico das comissões. O novo mapa partidário garante hegemonia ao governo nos principais colegiados da casa.</p>
-            ) : (
-              <p>O governo enfrentava dificuldades regimentais com uma base fragmentada. A oposição detinha maioria em áreas sensíveis e ditava o ritmo das votações orçamentárias.</p>
-            )}
-          </div>
-        </main>
-
-        <footer className="bg-slate-50 p-4 border-t border-slate-200 flex justify-between items-center">
-          <div className="text-[10px] text-slate-400 font-medium">
-            Fonte: Diário Oficial / Jamildo.com
-          </div>
-          <div className="flex gap-2">
-            <div className="w-2 h-2 rounded-full bg-[#024796]"></div>
-            <div className="w-2 h-2 rounded-full bg-[#f83d03]"></div>
-          </div>
-        </footer>
-      </div>
-      
-      <div className="mt-4 text-slate-400 text-xs">
-        Desenvolvido para Jamildo.com
-      </div>
-    </div>
-  );
-};
-
-export default App;
+        // Re-run Lucide icons after rendering
+        setTimeout(() => {
+            if (window.lucide) window.lucide.createIcons();
+        }, 100);
+    </script>
+</body>
+</html>
